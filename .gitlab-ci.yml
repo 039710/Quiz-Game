@@ -1,0 +1,55 @@
+image: openjdk:alpine
+
+before_script:
+    - export GRADLE_USER_HOME=`pwd`/.gradle
+    - chmod +x ./gradlew
+
+
+stages:
+  - build
+  - check
+
+build:
+  stage: build
+  script:
+    - ./gradlew assemble
+
+checkstyle_main:
+  stage: check
+  script:
+    - ./gradlew check checkstyleMain
+    - cp build/reports/checkstyle/main.html ./checkstyleMain.html
+  artifacts:
+    paths:
+    - checkstyleMain.html
+    expire_in: 1 week
+
+checkstyle_test:
+  stage: check
+  script:
+    - ./gradlew check checkstyleTest
+    - cp build/reports/checkstyle/test.html ./checkstyleTest.html
+  artifacts:
+    paths:
+    - checkstyleTest.html
+    expire_in: 1 week
+
+spotbugs_main:
+  stage: check
+  script:
+    - ./gradlew check spotbugsMain 
+    - cp build/reports/spotbugs/main.html ./spotbugsMain.html
+  artifacts:
+    paths:
+    - spotbugsMain.html
+    expire_in: 1 week
+
+spotbugs_test:
+  stage: check
+  script:
+    - ./gradlew check spotbugsTest
+    - cp build/reports/spotbugs/test.html ./spotbugsTest.html
+  artifacts:
+    paths:
+    - spotbugsTest.html
+    expire_in: 1 week
